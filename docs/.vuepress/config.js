@@ -59,7 +59,7 @@ module.exports = {
           },
         ],
       },
-      { text: "My Github", link: "https://baidu.com" },
+      { text: "My Github", link: "https://github.com/liupziio/Pz-blog" },
     ],
     sidebar: "auto", // 侧边栏配置
     sidebarDepth: 2, // 侧边栏显示2级

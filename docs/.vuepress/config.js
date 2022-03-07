@@ -29,6 +29,10 @@ module.exports = {
             text: "构建工具",
             items: [{ text: "webpack", link: "/notebook/构建/webpack" }],
           },
+          {
+            text: "数据请求",
+            items: [{ text: "axios", link: "/notebook/数据请求/axios" }],
+          },
         ],
       },
       {

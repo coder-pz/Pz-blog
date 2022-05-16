@@ -21,8 +21,9 @@ module.exports = {
           {
             text: "javaScript",
             items: [
-              { text: "js常用", link: "/notebook/js/js笔记" },
               { text: "数组操作", link: "/notebook/js/数组操作" },
+              { text: "js常用", link: "/notebook/js/js笔记" },
+              { text: "js进阶", link: "/notebook/js/js进阶/JS进阶" },
             ],
           },
           {

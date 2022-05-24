@@ -54,7 +54,15 @@ module.exports = {
           },
         ],
       },
-
+      {
+        text: "探索原理",
+        items: [
+          {
+            text: "javaScript",
+            link: "/notebook/learnPrinciple/探索原理",
+          },
+        ],
+      },
       {
         text: "代码管理",
         items: [

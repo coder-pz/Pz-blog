@@ -14,8 +14,8 @@ module.exports = {
           {
             text: "布局",
             items: [
-              { text: "flex布局", link: "/notebook/布局/flex布局" },
-              { text: "Grid布局", link: "/notebook/布局/Grid布局" },
+              { text: "flex布局", link: "/notebook/layout/flex布局" },
+              { text: "Grid布局", link: "/notebook/layout/Grid布局" },
             ],
           },
           {
@@ -28,11 +28,11 @@ module.exports = {
           },
           {
             text: "构建工具",
-            items: [{ text: "webpack", link: "/notebook/构建/webpack" }],
+            items: [{ text: "webpack", link: "/notebook/buildTools/webpack" }],
           },
           {
             text: "数据请求",
-            items: [{ text: "axios", link: "/notebook/数据请求/axios" }],
+            items: [{ text: "axios", link: "/notebook/dataRequest/axios" }],
           },
         ],
       },
@@ -42,15 +42,15 @@ module.exports = {
           {
             text: "Vue2",
             items: [
-              { text: "Vue属性", link: "/notebook/前端框架/Vue2/Vue属性" },
-              { text: "Vue指令", link: "/notebook/前端框架/Vue2/Vue指令" },
-              { text: "Vue指令", link: "/notebook/前端框架/Vue2/Vue组件化" },
-              { text: "VueRouter", link: "/notebook/前端框架/Vue2/Vue-router" },
+              { text: "Vue属性", link: "/notebook/frontFrame/Vue2/Vue属性" },
+              { text: "Vue指令", link: "/notebook/frontFrame/Vue2/Vue指令" },
+              { text: "Vue组件", link: "/notebook/frontFrame/Vue2/Vue组件化" },
+              { text: "VueRouter", link: "/notebook/frontFrame/Vue2/Vue-router" },
             ],
           },
           {
             text: "Vue3",
-            items: [{ text: "Vue3基本使用", link: "/notebook/前端框架/Vue3/Vue3" }],
+            items: [{ text: "Vue3基本使用", link: "/notebook/frontFrame/Vue3/Vue3" }],
           },
         ],
       },

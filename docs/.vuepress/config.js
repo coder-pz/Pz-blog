@@ -22,8 +22,9 @@ module.exports = {
             text: "javaScript",
             items: [
               { text: "数组操作", link: "/notebook/js/数组操作" },
-              { text: "js常用", link: "/notebook/js/js笔记" },
-              { text: "js进阶", link: "/notebook/js/js进阶/JS进阶" },
+              // { text: "js常用", link: "/notebook/js/js笔记" },
+              { text: "js进阶1", link: "/notebook/js/js进阶/JS进阶1" },
+              { text: "js进阶2", link: "/notebook/js/js进阶/JS进阶2" },
             ],
           },
           {
@@ -42,9 +43,9 @@ module.exports = {
           {
             text: "Vue2",
             items: [
-              { text: "Vue属性", link: "/notebook/frontFrame/Vue2/Vue属性" },
+              // { text: "Vue属性", link: "/notebook/frontFrame/Vue2/Vue属性" },
               { text: "Vue指令", link: "/notebook/frontFrame/Vue2/Vue指令" },
-              { text: "Vue组件", link: "/notebook/frontFrame/Vue2/Vue组件化" },
+              // { text: "Vue组件", link: "/notebook/frontFrame/Vue2/Vue组件化" },
               { text: "VueRouter", link: "/notebook/frontFrame/Vue2/Vue-router" },
             ],
           },

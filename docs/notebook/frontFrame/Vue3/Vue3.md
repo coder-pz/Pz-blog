@@ -1290,7 +1290,7 @@ app.mount("#app");
 
 **可用于需要统一理的数据**
 
-![avatar](./Vue3.assets/image-20211007142318140.png)
+![image-20211007142318140](./Vue3.assets/image-20211007142318140.png)
 
 
 
@@ -1302,7 +1302,7 @@ app.mount("#app");
 
 
 
-![avatar](./Vue3.assets/image-20211007130728367.png)
+![image-20211007130728367](./Vue3.assets/image-20211007130728367.png)
 
 
 
@@ -1335,7 +1335,7 @@ app.mount("#app");
 
 **效果**
 
-![avatar](./Vue3.assets/image-20211007145028270.png)
+![image-20211007145028270](./Vue3.assets/image-20211007145028270.png)
 
 
 
@@ -1534,7 +1534,7 @@ const accountRef = ref<InstanceType<typeof LoginAccount>>()
 
 >因 vuex 对 typeScript 支持不友好，在vuex的useStore中的类型为any 并没有类型检测，如下：
 
-![avatar](./Vue3.assets/image-20220116125414319.png)
+![image-20220116125414319](./Vue3.assets/image-20220116125414319.png)
 
 
 
@@ -1544,11 +1544,11 @@ const accountRef = ref<InstanceType<typeof LoginAccount>>()
 
 
 
-![avatar](./Vue3.assets/image-20220116125756965.png)
+![image-20220116125756965](./Vue3.assets/image-20220116125756965.png)
 
 
 
-![avatar](./Vue3.assets/image-20220116130212788.png)
+![image-20220116130212788](./Vue3.assets/image-20220116130212788.png)
 
 
 
@@ -1590,7 +1590,7 @@ coderwhy add3page test -d src/views/main/test
 
 > 会根据命令创建出不同的 路由 与 vue文件 （并有相应代码）
 
-![avatar](./Vue3.assets/image-20220116142744756.png)
+![image-20220116142744756](./Vue3.assets/image-20220116142744756.png)
 
 
 
@@ -1751,7 +1751,7 @@ mutations: {
 
 #### 2.4 路由注册执行顺序
 
-![avatar](./Vue3.assets/image-20220121121703169.png)
+![image-20220121121703169](./Vue3.assets/image-20220121121703169.png)
 
 
 
@@ -1828,7 +1828,7 @@ export const searchFormConfig: IForm = {
 
 **实现成果**
 
-![avatar](./Vue3.assets/image-20220122151442939.png)
+![image-20220122151442939](./Vue3.assets/image-20220122151442939.png)
 
 
 

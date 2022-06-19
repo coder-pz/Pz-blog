@@ -1,6 +1,6 @@
 # JavaScript进阶
 
-# 阅读源码的问题
+## 阅读源码的问题
 
 + 一定不要浮躁
 + 看到后面忘记前面的东西
@@ -23,13 +23,13 @@
 
 + 现在大部分还是再说早期ECMA的版本规范
 
-![avatar](./JsFurther.assets/image-20220327153106083.png)
+![image-20220327153106083](./JsFurther.assets/image-20220327153106083.png)
 
 
 
 + 在最新的ECMA的版本规范中，对于一些词汇进行了修改：
 
-![avatar](./JsFurther.assets/image-20220327153124445.png)
+![image-20220327153124445](./JsFurther.assets/image-20220327153124445.png)
 
 > 整体来说VO对象(variable Object),也就是每次入栈创建的vo对象改了称呼为 "变量环境"
 
@@ -66,13 +66,13 @@
 
 + 在浏览器内存中的 **变量/函数** 会在自己的 **堆内存地址上** 身上做上标记点，也就是有几个指向他，直到没有指向他的，过段时间浏览器就会删除这块内存
 
-![avatar](./JsFurther.assets/image-20220327160348295.png)
+![image-20220327160348295](./JsFurther.assets/image-20220327160348295.png)
 
 
 
 + 但是引用计数有 一个严重的弊端 **循环引用**，下图这样两个变量互相指定就不会被销毁
 
-![avatar](./JsFurther.assets/image-20220327160612837.png)
+![image-20220327160612837](./JsFurther.assets/image-20220327160612837.png)
 
 
 
@@ -90,7 +90,7 @@
 
 #### 	1.1 闭包的定义
 
-![avatar](./JsFurther.assets/image-20220327161820072.png)
+![image-20220327161820072](./JsFurther.assets/image-20220327161820072.png)
 
 
 
@@ -992,7 +992,7 @@ console.log(obj.name)//依然还是why
 
 > 通过new出来的函数可以接收到函数体
 
-![avatar](./JsFurther.assets/image-20220410122648225.png)
+![image-20220410122648225](./JsFurther.assets/image-20220410122648225.png)
 
 
 
@@ -1139,7 +1139,7 @@ console.log(f2.__proto__ === foo.prototype);//true
 
 ##### 4.2.1 构造函数原型在内存中的样子
 
-![avatar](./JsFurther.assets/image-20220410144114005.png)
+![image-20220410144114005](./JsFurther.assets/image-20220410144114005.png)
 
 
 
@@ -2243,7 +2243,7 @@ for (const [key, value] of map2) {
   + 引用区别
     + map 是 强引用
     + weakMap 是弱引用
-  + 不能使用基本数据类型
+  + 不能使用基本数据类型作为 key
 
 + WeakMap常见的方法有四个
   + set(key, value)
@@ -2343,7 +2343,7 @@ fns.forEach((item) => item()); //两个函数循环调用
 
 
 
-![avatar](./JsFurther.assets/image-20220503145306894.png)
+![image-20220503145306894](./JsFurther.assets/image-20220503145306894.png)
 
 
 
@@ -2466,7 +2466,7 @@ console.log(i)
 + 在一个作用域中称之为暂时性死区，在这里是不可以提前访问变量
 + 以下标记出来的为暂时性死区
 
-![avatar](./JsFurther.assets/image-20220504101152471.png)
+![image-20220504101152471](./JsFurther.assets/image-20220504101152471.png)
 
 
 

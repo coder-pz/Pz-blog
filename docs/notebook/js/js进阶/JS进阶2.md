@@ -947,7 +947,7 @@ foo().catch((err) => {
 
 ##### 定义：
 
-![avatar](./JsFurther.assets/image-20220527155941277.png)
+![image-20220527155941277](./JsFurther.assets/image-20220527155941277.png)
 
 
 
@@ -1105,7 +1105,7 @@ console.log("script end");
 
 
 
-![avatar](./JsFurther.assets/image-20220527170855330.png)
+![image-20220527170855330](./JsFurther.assets/image-20220527170855330.png)
 
 
 
@@ -1309,7 +1309,7 @@ fs.readFile()
 console.log(module.paths);
 ```
 
-![avatar](./JsFurther.assets/image-20220601210417790.png)
+![image-20220601210417790](./JsFurther.assets/image-20220601210417790.png)
 
 
 
@@ -1744,6 +1744,1459 @@ define(function(require, exports, module) {
 > 但是前提是需要把 `package-lock.json` 文件先删除，因为这文件中是具体版本，只有删除这个文件，`npm install` 时候才会根据 `package.json`的 **^ ~** 符号安装
 
 
+
+
+
+### 3、npm install 的原理
+
++ npm install会检测是有package-lock.json文件：
+  + 没有lock文件
+    +  分析依赖关系，这是因为我们可能包会依赖其他的包，并且多个包之间会产生相同依赖的情况； 
+    + 从registry仓库中下载压缩包（如果我们设置了镜像，那么会从镜像服务器下载压缩包）；
+    +  获取到压缩包后会对压缩包进行缓存（从npm5开始有的）；
+    + 将压缩包解压到项目的node_modules文件夹中（前面我们讲过，require的查找顺序会在该包下面查找）
+
+
+
++ 有lock文件
+  +  检测lock中包的版本是否和package.json中一致（会按照semver版本规范检测）；
+    + 不一致，那么会重新构建依赖关系，直接会走顶层的流程
+  + 一致的情况下，会去优先查找缓存
+    + 没有找到，会从registry仓库下载，直接走顶层流程；
+    + 查找到，会获取缓存中的压缩文件，并且将压缩文件解压到node_modules文件夹中
+
+
+
+
+
+
+
+![image-20220608212715779](./JsFurther.assets/image-20220608212715779.png)
+
+
+
+#### 3.1 package-lock
+
++ version
+  + 准确版本号
+
++ resolved
+  + 下载的地址
++ integrity
+  + 当前包npm缓存对应的索引
+
+```shell
+#查看缓存位置
+npm get cache
+```
+
+### 4、cnpm
+
+
+
+> cnpm 一定意义上来说其实就是 npm只是利用cnpm更改一下国内镜像，这样npm，cnpm就可以并存的，一个是国内仓库，一个是官方仓库
+
++ cnpm将镜像更改到国内的仓库
+  + 而国内的仓库其实是一定的时间**拷贝一下国外的仓库**
+
+
+
+### 5、 npx
+
++ 全局安装的是webpack5.1.3
++ 项目安装的是webpack3.6.0
+
+**问题：**
+
++ 执行 webpack --version使用的是哪一个版本
+
+> 结果会是 webpack 5.1.3
+>
+> 原因非常简单，在当前目录下找不到webpack时，就会去全局找，并且执行命令
+
+**解决问题**
+
+1. 明确查找到node_module下面的webpack
+
+```js
+./node_modules/.bin/webpack --version
+```
+
+2. 在 scripts定义脚本，来执行webpack
+
+```json
+"scripts": {
+"webpack": "webpack --version"
+}
+```
+
+3. 使用npx
+
+```js
+npx webpack --version
+```
+
+### 6、发布自己的npm工具包
+
+1. npm init 生成package.json
+
+```json
+{
+  "name": "pz_test_utils",
+  "version": "1.1.0",
+  "description": "a test utils",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "coderwhy", //作者名字
+  "license": "MIT", //协议
+  "repository": {
+    "type": "git",
+    "url": "" //仓库地址
+  },
+  "homepage": "", //管网地址没有就放仓库
+  "keywords": [ //根据哪些关键字可以搜索到
+    "test",
+    "qqq",
+    "aaa"
+  ]
+}
+```
+
+2. npm login
+3. npm publish
+
+
+
+**发布包**
+
++ index.js
+
+```js
+function add(num1, num2) {
+  return num1 + num2
+}
+
+function sub(num1, num2) {
+  return num1 - num2
+}
+
+function mul(num1, num2) {
+  return num1 * num2
+}
+
+module.exports = {
+  add,
+  sub,
+  mul
+}
+```
+
+**项目使用**
+
+```js
+npm install pz_test_utils
+```
+
++ main.js
+
+```js
+const { add, sub, mul } = require("pz_test_utils");
+
+console.log(add(10, 20));//30
+console.log(sub(10, 20));//-10
+console.log(mul(10, 20));//200
+
+```
+
+
+
+**更新仓库**
+
++ 修改版本号(遵守semver规范)
++ 重新发布
+
+**删除发布过的包**
+
++ npm unpublish
+
+**让发布过的包过期**
+
++ npm deprecate
+
+
+
+## 六、客户端存储方式
+
+### 1、IndexDB数据库
+
+
+
+#### 1.1 链接数据库
+
++ 通过indexDB.open(数据库名称, 数据库版本)方法，打开一个数据库
+  + 数据不存在会创建否则打开
++ 通过监听回调得到数据库连接结果
+  + 数据库的open方法会得到一个**IDBOpenDBRequest**类型
+  + onerror：当数据库连接失败时
+  + onsuccess：当数据库连接成功时回调
+    + 通过onsuccess回调的event获取到db对象：event.target.result
+  + onupgradeneeded：当数据库的version发生变化并且高于之前版本时回调
+    + 通常我们在这里会创建具体的存储对象：db.createObjectStore(存储对象名称, { keypath: 存储的主键 })  `(这里相当于后端数据库的建表与设置主键)`
+
+
+
+#### 1.2 数据库操作
+
+
+
++ 对数据库的操作要通过事务对象来完成
+
+  + 第一步：通过db获取对应存储的事务 db.transaction(存储名称, 可写操作)
+  + 第二步：通过事务获取对应的存储对象 transaction.objectStore(存储名称)
+
++ 新增数据
+
+  ```js
+  const store = transaction.objectStore("users");
+   const request = store.add(user);
+            request.onsuccess = function () {
+              console.log(`${user.name}插入成功`);
+   };
+  ```
+
++ 查询数据
+
+```js
+   // 1.查询方式一(知道主键, 根据主键查询)
+        const request = store.get(102)
+        request.onsuccess = function(event) {
+          console.log(event.target.result)
+        }
+ // 2.查询方式二:
+        const request = store.openCursor();
+        request.onsuccess = function (event) {
+          const cursor = event.target.result;
+          if (cursor) {
+            if (cursor.key === 101) {
+              //获取指针key===101
+              console.log(cursor.key, cursor.value);
+              // cursor.continue(); //继续
+            } else {
+              cursor.continue(); //继续
+            }
+          } else {
+            console.log("查询完成");
+          }
+```
+
++ 修改数据
+
+```js
+     const updateRequest = store.openCursor();
+        updateRequest.onsuccess = function (event) {
+          const cursor = event.target.result;
+          if (cursor) {
+            if (cursor.key === 101) {
+              const value = cursor.value; //先拿
+              value.name = "curry"; //再改
+              cursor.update(value); //修改
+            } else {
+              cursor.continue();
+            }
+          } else {
+            console.log("查询完成");
+          }
+        };
+```
+
++ 删除数据
+
+```js
+    const deleteRequest = store.openCursor();
+        deleteRequest.onsuccess = function (event) {
+          const cursor = event.target.result;
+          if (cursor) {
+            if (cursor.key === 101) {
+              cursor.delete(); //删除当前指针
+            } else {
+              cursor.continue();
+            }
+          } else {
+            console.log("查询完成");
+          }
+        };
+```
+
+**完整操作**
+
+```js
+// 打开数据(和数据库建立连接)
+const dbRequest = indexedDB.open("why", 3);
+dbRequest.onerror = function (err) {
+  console.log("打开数据库失败~");
+};
+let db = null;
+// 链接成功
+dbRequest.onsuccess = function (event) {
+  db = event.target.result; //获取操作对象
+};
+// 第一次打开/或者版本发生升级
+dbRequest.onupgradeneeded = function (event) {
+  const db = event.target.result; //获取操作对象
+
+  console.log(db);
+
+  // 创建一些存储对象（users表，主键为id）
+  db.createObjectStore("users", { keyPath: "id" });
+};
+
+class User {
+  constructor(id, name, age) {
+    this.id = id;
+    this.name = name;
+    this.age = age;
+  }
+}
+
+const users = [new User(100, "why", 18), new User(101, "kobe", 40), new User(102, "james", 30)];
+
+// 获取btns, 监听点击
+const btns = document.querySelectorAll("button");
+for (let i = 0; i < btns.length; i++) {
+  btns[i].onclick = function () {
+    //通过db获取对应存储的事务
+    const transaction = db.transaction("users", "readwrite");
+    console.log(transaction);
+    // 通过事务获取对应的存储对象
+    const store = transaction.objectStore("users");
+
+    switch (i) {
+      case 0:
+        console.log("点击了新增");
+        for (const user of users) {
+          const request = store.add(user);
+          request.onsuccess = function () {
+            console.log(`${user.name}插入成功`);
+          };
+        }
+        transaction.oncomplete = function () {
+          console.log("添加操作全部完成");
+        };
+        break;
+      case 1:
+        console.log("点击了查询");
+
+        // 1.查询方式一(知道主键, 根据主键查询)
+        // const request = store.get(102)
+        // request.onsuccess = function(event) {
+        //   console.log(event.target.result)
+        // }
+
+        // 2.查询方式二:
+        const request = store.openCursor();
+        request.onsuccess = function (event) {
+          const cursor = event.target.result;
+          if (cursor) {
+            if (cursor.key === 101) {
+              //获取指针key===101
+              console.log(cursor.key, cursor.value);
+              // cursor.continue(); //继续
+            } else {
+              cursor.continue(); //继续
+            }
+          } else {
+            console.log("查询完成");
+          }
+        };
+        break;
+      case 2:
+        console.log("点击了删除");
+        const deleteRequest = store.openCursor();
+        deleteRequest.onsuccess = function (event) {
+          const cursor = event.target.result;
+          if (cursor) {
+            if (cursor.key === 101) {
+              cursor.delete(); //删除当前指针
+            } else {
+              cursor.continue();
+            }
+          } else {
+            console.log("查询完成");
+          }
+        };
+        break;
+      case 3:
+        console.log("点击了修改");
+        const updateRequest = store.openCursor();
+        updateRequest.onsuccess = function (event) {
+          const cursor = event.target.result;
+          if (cursor) {
+            if (cursor.key === 101) {
+              const value = cursor.value; //先拿
+              value.name = "curry"; //再改
+              cursor.update(value); //修改
+            } else {
+              cursor.continue();
+            }
+          } else {
+            console.log("查询完成");
+          }
+        };
+        break;
+    }
+  };
+}
+
+```
+
+### 2、 Cookie 
+
+#### 1.1 缺点
+
+1. 每一次请求都会带着 cookie ，所以比较消耗流量
+2. 明文传输header cookie
+3. 大小限制在4kb
+4. cookie 验证登录某些客户端不能自动设置cookie (安卓，ios等)
+
+
+
+## 七、BOM与Dom
+
+> 浏览器对象模型，操作浏览器部分功能的API
+
+### 1、history
+
+> history对象允许访问浏览器曾经的会话历史记录。
+
++ 有两个属性
+  + length：会话中的记录条数
+  + state：当前保留的状态值
++ 五个方法
+  + back()：返回上一页，等价于history.go(-1)； 
+  + forward()：前进下一页，等价于history.go(1)； 
+  + go()：加载历史中的某一页；
+  + pushState()：打开一个指定的地址；
+  + replaceState()：打开一个新的地址，并且使用replace；
+
+**其中的pushState 即是前端spa路由实现的原理**
+
+> 只会更新状态不会刷新网页，监听状态更新路由
+
+```js
+
+jumpBtn.onclick = function() {
+  // location.href = "./demo.html"
+
+  // 跳转(不刷新网页)
+  history.pushState({name: "coderwhy"}, "", "/detail")
+  // history.replaceState({name: "coderwhy"}, "", "/detail")
+}
+
+```
+
+### 2、Dom架构
+
+![image-20220614061738086](./JsFurther.assets/image-20220614061738086.png)
+
+
+
+
+
++ 阻止默认行为
+  + stopPropagation()
++ 阻止事件冒泡
+  + stopPropagation()
+
+
+
+## 八、防抖节流
+
+
+
+### 1、防抖
+
+**定义**
+
++ 当事件触发时，相应的函数并不会立即触发，而是会**等待一定的时间**
++ 当事件**密集触发**时，函数的触发会被**频繁的推迟**
++ 只有等待了一定的时间**没有事件触发**，才会**执行响应函数**
+
+
+
+### debounce-v1-基本实现
+
+```js
+function debounce(fn, delay) {
+  // 1.定义一个定时器, 保存上一次的定时器
+  let timer = null
+
+  // 2.真正执行的函数
+  const _debounce = function() {
+    // 取消上一次的定时器
+    if (timer) clearTimeout(timer)
+    // 延迟执行
+    timer = setTimeout(() => {
+      // 外部传入的真正要执行的函数
+      fn()
+    }, delay)
+  }
+
+  return _debounce
+}
+
+```
+
+### debounce-v2-this-参数
+
+**实现**
+
++ 处理外部 this 指向与参数问题
+
+**实现思路**
+
++ 因为外部实际调用的是 `_debounce` 函数，所以参数与this绑定在这个函数上
++ 写上形参，并在调用外部传入的函数时候将 `this` 与 `参数` 绑定返回去
+
+```js
+function debounce(fn, delay) {
+  // 1.定义一个定时器, 保存上一次的定时器
+  let timer = null;
+
+  // 2.真正执行的函数
+  // 传入参数(不明确多少参数使用展开运算)
+  const _debounce = function (...args) {
+    // 取消上一次的定时器
+    if (timer) clearTimeout(timer);
+    // 延迟执行
+    timer = setTimeout(() => {
+      // 外部传入的真正要执行的函数
+      // 将this与参数传回去
+      fn.apply(this, args);
+    }, delay);
+  };
+
+  return _debounce;
+}
+
+```
+
+
+
+### debounce-v3-立即执行
+
+**实现**
+
++ 加入立即执行功能
++ **第一次**输入的信息**立即执行**，**以后**才开始**延时**，而延时执行完毕，**再一次**输入第一次一样是**立即执行**
+
+**实现思路**
+
++ 让**外界**传入一个**参数**，通知是否需要立即执行
++ 内部定义一个**标记** 处理延时执行后的重新开始立即执行
+
+```js
+function debounce(fn, delay, immediate = false) {
+  // 1.定义一个定时器, 保存上一次的定时器
+  let timer = null
+  let isInvoke = false
+
+  // 2.真正执行的函数
+  const _debounce = function(...args) {
+    // 取消上一次的定时器
+    if (timer) clearTimeout(timer)
+
+    // 判断是否需要立即执行
+    if (immediate && !isInvoke) {
+      fn.apply(this, args)
+      isInvoke = true
+    } else {
+      // 延迟执行
+      timer = setTimeout(() => {
+        // 外部传入的真正要执行的函数
+        fn.apply(this, args)
+        isInvoke = false
+      }, delay)
+    }
+  }
+
+  return _debounce
+}
+
+
+```
+
+### debounce-v4-取消功能
+
+**实现**
+
++ 加入取消功能
+
+**实现思路**
+
++ 将函数内的定时器、标记点等关闭
+
+```js
+function debounce(fn, delay, immediate = false) {
+  // 1.定义一个定时器, 保存上一次的定时器
+  let timer = null;
+  let isInvoke = false;
+
+  // 2.真正执行的函数
+  const _debounce = function (...args) {
+    // 取消上一次的定时器
+    if (timer) clearTimeout(timer);
+
+    // 判断是否需要立即执行
+    if (immediate && !isInvoke) {
+      fn.apply(this, args);
+      isInvoke = true;
+    } else {
+      // 延迟执行
+      timer = setTimeout(() => {
+        // 外部传入的真正要执行的函数
+        fn.apply(this, args);
+        isInvoke = false;
+        timer = null;
+      }, delay);
+    }
+  };
+
+  // 封装取消功能
+  _debounce.cancel = function () {
+    if (timer) clearTimeout(timer);
+    timer = null;
+    isInvoke = false;
+  };
+
+  return _debounce;
+}
+
+```
+
+### debounce-v5-函数返回值
+
+**实现**
+
++ 加入返回值
+
+**实现思路**
+
++ 使用回调函数 **callback**，或者返回一个 **Promise** 可以并用
+
+```js
+  const inputEl = document.querySelector("input")
+    let counter = 0
+
+    const inputChange = function (event) {
+      console.log(`发送了第${++counter}次网络请求`, this, event)
+
+      // 返回值
+      return "aaaaaaaaaaaa"
+    }
+
+    // 防抖处理
+    // inputEl.oninput = _.debounce(inputChange, 2000)
+    const debounceChange = debounce(inputChange, 3000, false, (res) => {
+      console.log("拿到真正执行函数的返回值:", res)
+    })
+    const tempCallback = () => {
+      debounceChange().then(res => {
+        console.log("Promise的返回值结果:", res)
+      })
+    }
+    inputEl.oninput = tempCallback
+```
+
+```js
+//传入回调函数resultCallback
+function debounce(fn, delay, immediate = false, resultCallback) {
+  // 1.定义一个定时器, 保存上一次的定时器
+  let timer = null;
+  let isInvoke = false;
+
+  // 2.真正执行的函数
+  const _debounce = function (...args) {
+    return new Promise((resolve, reject) => {
+      // 取消上一次的定时器
+      if (timer) clearTimeout(timer);
+
+      // 判断是否需要立即执行
+      if (immediate && !isInvoke) {
+        const result = fn.apply(this, args);
+        if (resultCallback) resultCallback(result); //如果有回调则传出
+        resolve(result); //将拿到的值resolve
+        isInvoke = true;
+      } else {
+        // 延迟执行
+        timer = setTimeout(() => {
+          // 外部传入的真正要执行的函数
+          const result = fn.apply(this, args);
+          if (resultCallback) resultCallback(result); //如果有回调则传出
+          resolve(result); //将拿到的值resolve
+          isInvoke = false;
+          timer = null;
+        }, delay);
+      }
+    });
+  };
+
+  // 封装取消功能
+  _debounce.cancel = function () {
+    if (timer) clearTimeout(timer);
+    timer = null;
+    isInvoke = false;
+  };
+
+  return _debounce;
+}
+```
+
+
+
+
+
+
+
+### 2、节流
+
+**定义**
+
++ 当事件触发时，会执行这个事件的响应函数
++ 如果这个事件**频繁触发**，那么节流函数会**根据一定的频率执行响应函数**
+
+
+
+
+
+### throttle-v1-基本实现
+
+**实现思路**
+
++ 如果当前定时时间减去 (触发时间减去上次时间触发时间) 等于0那么就执行
++ remainTime = interval - (nowTime - lastTime)
++ .使用当前触发的时间和之前的时间间隔以及上一次开始的时间, 计算出还剩余多长事件需要去触发函数
++ 如果 `remainTime` 小于0或者等于0 那么就执行
+
+```js
+function throttle(fn, interval, options) {
+  // 1.记录上一次的开始时间
+  let lastTime = 0
+
+  // 2.事件触发时, 真正执行的函数
+  const _throttle = function() {
+
+    // 2.1.获取当前事件触发时的时间
+    const nowTime = new Date().getTime()
+
+    // 2.2.使用当前触发的时间和之前的时间间隔以及上一次开始的时间, 计算出还剩余多长事件需要去触发函数
+    const remainTime = interval - (nowTime - lastTime)
+    if (remainTime <= 0) {
+      // 2.3.真正触发函数
+      fn()
+      // 2.4.保留上次触发的时间
+      lastTime = nowTime
+    }
+  }
+
+  return _throttle
+}
+
+```
+
+### throttle-v2-leading实现
+
+**实现**
+
++ 第一次输入执行或者不执行（ leading ）
+
+**实现思路**
+
++ 传入一个配置项标记
++ 将 上次时间 `lastTime` 设置为 触发时间即可
+
+```js
+/**
+ *
+ * @param {*} fn 函数
+ * @param {*} interval 时长
+ * @param {*} options leading 第一次是否触发 trailing最后是否触发
+ * @returns
+ */
+function throttle(fn, interval, options = { leading: true, trailing: false }) {
+  // 1.记录上一次的开始时间
+  const { leading, trailing } = options;
+  let lastTime = 0;
+
+  // 2.事件触发时, 真正执行的函数
+  const _throttle = function () {
+    // 2.1.获取当前事件触发时的时间
+    const nowTime = new Date().getTime();
+    if (!lastTime && !leading) lastTime = nowTime;
+
+    // 2.2.使用当前触发的时间和之前的时间间隔以及上一次开始的时间, 计算出还剩余多长事件需要去触发函数
+    const remainTime = interval - (nowTime - lastTime);
+    if (remainTime <= 0) {
+      // 2.3.真正触发函数
+      fn();
+      // 2.4.保留上次触发的时间
+      lastTime = nowTime;
+    }
+  };
+
+  return _throttle;
+}
+
+```
+
+### throttle-v3-traling实现
+
+**实现**
+
++ 处理**最后不到频率**的剩余键入值，**执行一次**
+
+**实现思路**
+
++ 创建一个 timer 变量
++ 如果满足 **trailing =  true** 与 有**timer**，那么就把**还有多长时间 remainTime** 作为 timer 定时器的时长
+  + 并在定时器函数中将，timer 上次时间 `lastTime` 等处理一下
+  + 不可以将lastTime直接设置为0，避免执行几毫秒的差，这里执行一次，正常逻辑又执行一次
++ 在**正常执行逻辑**中，将 **timer 关掉**，并且 **return 掉 最后定时器的执行** 
+
+```js
+/**
+ *
+ * @param {*} fn 函数
+ * @param {*} interval 时长
+ * @param {*} options leading 第一次是否触发 trailing最后是否触发
+ * @returns
+ */
+function throttle(fn, interval, options = { leading: true, trailing: false }) {
+  // 1.记录上一次的开始时间
+  const { leading, trailing } = options;
+  let lastTime = 0;
+  let timer = null;
+
+  // 2.事件触发时, 真正执行的函数
+  const _throttle = function () {
+    // 2.1.获取当前事件触发时的时间
+    const nowTime = new Date().getTime();
+    if (!lastTime && !leading) lastTime = nowTime;
+
+    // 2.2.使用当前触发的时间和之前的时间间隔以及上一次开始的时间, 计算出还剩余多长事件需要去触发函数
+    const remainTime = interval - (nowTime - lastTime);
+    if (remainTime <= 0) {
+      if (timer) {
+        //如果正常执行，需要关闭最后 trailing 函数
+        clearTimeout(timer);
+        timer = null;
+      }
+
+      // 2.3.真正触发函数
+      fn();
+      // 2.4.保留上次触发的时间
+      lastTime = nowTime;
+      return;
+    }
+    // 处理最后不到时间内的键入值
+    // 执行最后一次请求
+    if (trailing && !timer) {
+      timer = setTimeout(() => {
+        timer = null;
+        // 不可以将lastTime直接设置为0
+        // 避免执行几毫秒的差，这里执行一次，上边正常逻辑又执行一次
+        lastTime = !leading ? 0 : new Date().getTime();
+        fn();
+      }, remainTime);
+    }
+  };
+
+  return _throttle;
+}
+
+```
+
+### throttle-v4-this-参数
+
+**实现**
+
++ this 与 参数 的添加
+
+**实现思路**
+
++ 在实际调用函数上解构参数
++ 在传入函数调用，绑定 `this` 和 `参数`
+
+```js
+/**
+ *
+ * @param {*} fn 函数
+ * @param {*} interval 时长
+ * @param {*} options leading 第一次是否触发 trailing最后是否触发
+ * @returns
+ */
+function throttle(fn, interval, options = { leading: true, trailing: false }) {
+  // 1.记录上一次的开始时间
+  const { leading, trailing } = options;
+  let lastTime = 0;
+  let timer = null;
+
+  // 2.事件触发时, 真正执行的函数
+  const _throttle = function (...args) {
+    // 2.1.获取当前事件触发时的时间
+    const nowTime = new Date().getTime();
+    if (!lastTime && !leading) lastTime = nowTime;
+
+    // 2.2.使用当前触发的时间和之前的时间间隔以及上一次开始的时间, 计算出还剩余多长事件需要去触发函数
+    const remainTime = interval - (nowTime - lastTime);
+    if (remainTime <= 0) {
+      if (timer) {
+        //如果正常执行，需要关闭最后 trailing 函数
+        clearTimeout(timer);
+        timer = null;
+      }
+
+      // 2.3.真正触发函数
+      fn.apply(this, args);
+      // 2.4.保留上次触发的时间
+      lastTime = nowTime;
+      return;
+    }
+    // 处理最后不到时间内的键入值
+    // 执行最后一次请求
+    if (trailing && !timer) {
+      timer = setTimeout(() => {
+        timer = null;
+        // 不可以将lastTime直接设置为0
+        // 避免执行几毫秒的差，这里执行一次，上边正常逻辑又执行一次
+        lastTime = !leading ? 0 : new Date().getTime();
+        fn.apply(this, args);
+      }, remainTime);
+    }
+  };
+
+  return _throttle;
+}
+
+```
+
+### throttle-v5-取消功能
+
+**实现**
+
++ 加入取消功能
+
+**实现思路**
+
++ 点击取消**关闭定时器**并将**所有置为初始值**
+
+```js
+/**
+ *
+ * @param {*} fn 函数
+ * @param {*} interval 时长
+ * @param {*} options leading 第一次是否触发 trailing最后是否触发
+ * @returns
+ */
+function throttle(fn, interval, options = { leading: true, trailing: false }) {
+  // 1.记录上一次的开始时间
+  const { leading, trailing } = options;
+  let lastTime = 0;
+  let timer = null;
+
+  // 2.事件触发时, 真正执行的函数
+  const _throttle = function (...args) {
+    // 2.1.获取当前事件触发时的时间
+    const nowTime = new Date().getTime();
+    if (!lastTime && !leading) lastTime = nowTime;
+
+    // 2.2.使用当前触发的时间和之前的时间间隔以及上一次开始的时间, 计算出还剩余多长事件需要去触发函数
+    const remainTime = interval - (nowTime - lastTime);
+    if (remainTime <= 0) {
+      if (timer) {
+        //如果正常执行，需要关闭最后 trailing 函数
+        clearTimeout(timer);
+        timer = null;
+      }
+
+      // 2.3.真正触发函数
+      fn.apply(this, args);
+      // 2.4.保留上次触发的时间
+      lastTime = nowTime;
+      return;
+    }
+    // 处理最后不到时间内的键入值
+    // 执行最后一次请求
+    if (trailing && !timer) {
+      timer = setTimeout(() => {
+        timer = null;
+        // 不可以将lastTime直接设置为0
+        // 避免执行几毫秒的差，这里执行一次，上边正常逻辑又执行一次
+        lastTime = !leading ? 0 : new Date().getTime();
+        fn.apply(this, args);
+      }, remainTime);
+    }
+  };
+  // 取消功能
+  _throttle.cancel = function () {
+    if (timer) clearTimeout(timer);
+    timer = null;
+    lastTime = 0;
+  };
+
+  return _throttle;
+}
+
+```
+
+### throttle-v6-函数返回值
+
+**实现**
+
++ 加入返回值
+
+**实现思路**
+
++ 使用回调函数 **callback**，或者返回一个 **Promise** 可以并用
+
+```js
+/**
+ *
+ * @param {*} fn 函数
+ * @param {*} interval 时长
+ * @param {*} options leading 第一次是否触发 trailing最后是否触发 resultCallback 回调函数
+ * @returns
+ */
+function throttle(fn, interval, options = { leading: true, trailing: false }) {
+  // 1.记录上一次的开始时间
+  const { leading, trailing, resultCallback } = options;
+  let lastTime = 0;
+  let timer = null;
+
+  // 2.事件触发时, 真正执行的函数
+  const _throttle = function (...args) {
+    return new Promise((resolve, reject) => {
+      // 2.1.获取当前事件触发时的时间
+      const nowTime = new Date().getTime();
+      if (!lastTime && !leading) lastTime = nowTime;
+
+      // 2.2.使用当前触发的时间和之前的时间间隔以及上一次开始的时间, 计算出还剩余多长事件需要去触发函数
+      const remainTime = interval - (nowTime - lastTime);
+      if (remainTime <= 0) {
+        if (timer) {
+          //如果正常执行，需要关闭最后 trailing 函数
+          clearTimeout(timer);
+          timer = null;
+        }
+
+        // 2.3.真正触发函数
+        const result = fn.apply(this, args);
+        if (resultCallback) resultCallback(result);
+        resolve(result);
+        // 2.4.保留上次触发的时间
+        lastTime = nowTime;
+        return;
+      }
+
+      // 处理最后不到时间内的键入值
+      // 执行最后一次请求
+      if (trailing && !timer) {
+        timer = setTimeout(() => {
+          timer = null;
+          // 不可以将lastTime直接设置为0
+          // 避免执行几毫秒的差，这里执行一次，上边正常逻辑又执行一次
+          lastTime = !leading ? 0 : new Date().getTime();
+          const result = fn.apply(this, args);
+          if (resultCallback) resultCallback(result);
+          resolve(result);
+        }, remainTime);
+      }
+    });
+  };
+
+  _throttle.cancel = function () {
+    if (timer) clearTimeout(timer);
+    timer = null;
+    lastTime = 0;
+  };
+
+  return _throttle;
+}
+
+```
+
+
+
+## 九、深拷贝
+
+### 1、三种拷贝
+
++ 引入的赋值：指向同一个对象，相互之间会影响
+  + 引用内存地址指向一个地址
++ 对象的浅拷贝：只是浅层的拷贝，内部引入对象时，依然会相互影响； 
+  + `Object.assign({},obj)` 这里第一层可以深拷贝，但是对象引用的还是同一个地址
++ 对象的深拷贝：两个对象不再有任何关系，不会相互影响；
+  +  `JSON.parse(JSON.stringify())`
+
+
+
+**JSON.parse(JSON.stringify()) 弊端**
+
++ 对于函数、Symbol等是无法处理的
++ 并且存在对象的循环引用，也会报错的 (window.window.window)
+
+
+
+### 实现深拷贝函数v1-基本实现
+
+**实现**
+
++ 实现深拷贝
+
+**实现思路**
+
++ 在一个函数中**创建一个新对象**将赋值对象**循环出来赋值给新对象**
+
+```js
+function isObject(value) {
+  const valueType = typeof value;
+  return value !== null && (valueType === "object" || valueType === "function");
+}
+
+function deepClone(originValue) {
+  // 判断传入的originValue是否是一个对象类型
+  if (!isObject(originValue)) {
+    return originValue;
+  }
+
+  const newObject = {};
+  for (const key in originValue) {
+    newObject[key] = deepClone(originValue[key]);
+  }
+  return newObject;
+}
+
+// 测试代码
+const obj = {
+  name: "lpz",
+  age: 18,
+  friend: {
+    name: "james",
+    address: {
+      city: "北京",
+    },
+  },
+};
+
+const newObj = deepClone(obj);
+console.log(newObj === obj);
+
+obj.friend.name = "kobe";
+obj.friend.address.city = "杭州";
+console.log(newObj);
+
+```
+
+### 实现深拷贝函数v2-其他类型
+
+**实现**
+
++ 处理其他类型
+
+**实现思路**
+
++ 在函数中针对指定类型处理
+
+
+
+```js
+function isObject(value) {
+  const valueType = typeof value;
+  return value !== null && (valueType === "object" || valueType === "function");
+}
+
+function deepClone(originValue) {
+  // 判断是否是一个Set类型
+  if (originValue instanceof Set) {
+    return new Set([...originValue]);
+  }
+
+  // 判断是否是一个Map类型
+  if (originValue instanceof Map) {
+    return new Map([...originValue]);
+  }
+
+  // 判断如果是Symbol的value, 那么创建一个新的Symbol
+  if (typeof originValue === "symbol") {
+    return Symbol(originValue.description);
+  }
+
+  // 判断如果是函数类型, 那么直接使用同一个函数
+  if (typeof originValue === "function") {
+    return originValue;
+  }
+
+  // 判断传入的originValue是否是一个对象类型
+  if (!isObject(originValue)) {
+    return originValue;
+  }
+
+  // 判断传入的对象是数组, 还是对象
+  const newObject = Array.isArray(originValue) ? [] : {};
+  for (const key in originValue) {
+    newObject[key] = deepClone(originValue[key]);
+  }
+
+  // 对Symbol的key进行特殊的处理
+  const symbolKeys = Object.getOwnPropertySymbols(originValue);
+  for (const sKey of symbolKeys) {
+    // const newSKey = Symbol(sKey.description)
+    newObject[sKey] = deepClone(originValue[sKey]);
+  }
+
+  return newObject;
+}
+
+// 测试代码
+let s1 = Symbol("aaa");
+let s2 = Symbol("bbb");
+
+const obj = {
+  name: "why",
+  age: 18,
+  friend: {
+    name: "james",
+    address: {
+      city: "广州",
+    },
+  },
+  // 数组类型
+  hobbies: ["abc", "cba", "nba"],
+  // 函数类型
+  foo: function (m, n) {
+    console.log("foo function");
+    console.log("100代码逻辑");
+    return 123;
+  },
+  // Symbol作为key和value
+  [s1]: "abc",
+  s2: s2,
+  // Set/Map
+  set: new Set(["aaa", "bbb", "ccc"]),
+  map: new Map([
+    ["aaa", "abc"],
+    ["bbb", "cba"],
+  ]),
+};
+
+const newObj = deepClone(obj);
+console.log(newObj === obj);
+
+obj.friend.name = "kobe";
+obj.friend.address.city = "成都";
+console.log(newObj);
+console.log(newObj.s2 === obj.s2);
+
+```
+
+
+
+### 实现深拷贝函数v3-循环引用
+
+**实现**
+
++ 处理循环引用
+  + obj.info = obj
+  + 这样调用函数时候会出现死循环，栈溢出
+
+**实现思路**
+
++ 创建一个 **WeakMap** 每次将调用的参数传入，如果下次发现有同样的键，直接返回
+
+```js
+function isObject(value) {
+  const valueType = typeof value;
+  return value !== null && (valueType === "object" || valueType === "function");
+}
+// 使用WeakMap的好处是因为WeakMap是弱引用，其他对象不引用即便是WeakMap引用了垃圾回收机制也会销毁
+function deepClone(originValue, map = new WeakMap()) {
+  // 判断是否是一个Set类型
+  if (originValue instanceof Set) {
+    return new Set([...originValue]);
+  }
+
+  // 判断是否是一个Map类型
+  if (originValue instanceof Map) {
+    return new Map([...originValue]);
+  }
+
+  // 判断如果是Symbol的value, 那么创建一个新的Symbol
+  if (typeof originValue === "symbol") {
+    return Symbol(originValue.description);
+  }
+
+  // 判断如果是函数类型, 那么直接使用同一个函数
+  if (typeof originValue === "function") {
+    return originValue;
+  }
+
+  // 判断传入的originValue是否是一个对象类型
+  if (!isObject(originValue)) {
+    return originValue;
+  }
+  // 处理循环引用，判断有同样的值直接return出去
+  if (map.has(originValue)) {
+    return map.get(originValue);
+  }
+
+  // 判断传入的对象是数组, 还是对象
+  const newObject = Array.isArray(originValue) ? [] : {};
+  map.set(originValue, newObject);
+  for (const key in originValue) {
+    newObject[key] = deepClone(originValue[key], map);
+  }
+
+  // 对Symbol的key进行特殊的处理
+  const symbolKeys = Object.getOwnPropertySymbols(originValue);
+  for (const sKey of symbolKeys) {
+    // const newSKey = Symbol(sKey.description)
+    newObject[sKey] = deepClone(originValue[sKey], map);
+  }
+
+  return newObject;
+}
+
+// deepClone({name: "why"})
+
+// 测试代码
+let s1 = Symbol("aaa");
+let s2 = Symbol("bbb");
+
+const obj = {
+  name: "lpz",
+  age: 18,
+  friend: {
+    name: "james",
+    address: {
+      city: "北京",
+    },
+  },
+  // 数组类型
+  hobbies: ["abc", "cba", "nba"],
+  // 函数类型
+  foo: function (m, n) {
+    console.log("foo function");
+    console.log("100代码逻辑");
+    return 123;
+  },
+  // Symbol作为key和value
+  [s1]: "abc",
+  s2: s2,
+  // Set/Map
+  set: new Set(["aaa", "bbb", "ccc"]),
+  map: new Map([
+    ["aaa", "abc"],
+    ["bbb", "cba"],
+  ]),
+};
+
+obj.info = obj;
+
+const newObj = deepClone(obj);
+console.log(newObj === obj);
+
+obj.friend.name = "kobe";
+obj.friend.address.city = "杭州";
+console.log(newObj);
+console.log(newObj.s2 === obj.s2);
+
+console.log(newObj.info.info.info);
+
+```
+
+
+
+## 十、自定义事件
+
+### 定义
+
++ 自定义事件总线属于一种观察者模式，其中包括三个角色
+  + 发布者（Publisher）：发出事件（Event）；
+  + 订阅者（Subscriber）：订阅事件（Event），并且会进行响应（Handler）；
+  + 事件总线（EventBus）：无论是发布者还是订阅者都是通过事件总线作为中台的；
+
+
+
+### 实现
+
++ 利用 Class 实现 on、off、emit
+
+```js
+class HYEventBus {
+  constructor() {
+    this.eventBus = {};
+  }
+
+  on(eventName, eventCallback, thisArg) {
+    let handlers = this.eventBus[eventName];
+    if (!handlers) {
+      handlers = [];
+      this.eventBus[eventName] = handlers;
+    }
+    // 浅拷贝直接赋值当前变量 Class中也会变
+    handlers.push({
+      eventCallback,
+      thisArg,
+    });
+  }
+
+  off(eventName, eventCallback) {
+    const handlers = this.eventBus[eventName];
+    if (!handlers) return;
+    const newHandlers = [...handlers];
+    for (let i = 0; i < newHandlers.length; i++) {
+      const handler = newHandlers[i];
+      if (handler.eventCallback === eventCallback) {
+        const index = handlers.indexOf(handler);
+        handlers.splice(index, 1); //删除某个事件
+      }
+    }
+  }
+
+  emit(eventName, ...payload) {
+    const handlers = this.eventBus[eventName];
+    if (!handlers) return;
+    handlers.forEach((handler) => {
+      handler.eventCallback.apply(handler.thisArg, payload);
+    });
+  }
+}
+
+const eventBus = new HYEventBus();
+
+// main.js
+eventBus.on(
+  "abc",
+  function () {
+    console.log("监听abc1", this);
+  },
+  { name: "pz" }
+);
+
+const handleCallback = function () {
+  console.log("监听abc2", this);
+};
+eventBus.on("abc", handleCallback, { name: "lpz" });
+
+// utils.js
+eventBus.emit("abc", 123);
+
+// 移除监听
+eventBus.off("abc", handleCallback);
+eventBus.emit("abc", 123);
+
+```
 
 
 

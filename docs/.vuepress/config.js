@@ -12,11 +12,8 @@ module.exports = {
         text: "前端",
         items: [
           {
-            text: "布局",
-            items: [
-              { text: "flex布局", link: "/notebook/layout/flex布局" },
-              { text: "Grid布局", link: "/notebook/layout/Grid布局" },
-            ],
+            text: "构建工具",
+            items: [{ text: "webpack", link: "/notebook/buildTools/webpack" }],
           },
           {
             text: "javaScript",
@@ -28,12 +25,15 @@ module.exports = {
             ],
           },
           {
-            text: "构建工具",
-            items: [{ text: "webpack", link: "/notebook/buildTools/webpack" }],
-          },
-          {
             text: "数据请求",
             items: [{ text: "axios", link: "/notebook/dataRequest/axios" }],
+          },
+          {
+            text: "布局",
+            items: [
+              { text: "flex布局", link: "/notebook/layout/flex布局" },
+              { text: "Grid布局", link: "/notebook/layout/Grid布局" },
+            ],
           },
         ],
       },

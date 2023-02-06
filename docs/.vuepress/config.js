@@ -16,13 +16,8 @@ module.exports = {
             items: [{ text: "webpack", link: "/notebook/buildTools/webpack" }],
           },
           {
-            text: "javaScript",
-            items: [
-              { text: "数组操作", link: "/notebook/js/数组操作" },
-              // { text: "js常用", link: "/notebook/js/js笔记" },
-              { text: "js进阶1", link: "/notebook/js/js进阶/JS进阶1" },
-              { text: "js进阶2", link: "/notebook/js/js进阶/JS进阶2" },
-            ],
+            text: "操作数据",
+            items: [{ text: "数组操作", link: "/notebook/js/数组操作" }],
           },
           {
             text: "数据请求",
@@ -38,20 +33,48 @@ module.exports = {
         ],
       },
       {
-        text: "前端框架",
+        text: "JavaScript",
+        items: [
+          { text: "js进阶1", link: "/notebook/js/js进阶/JS进阶1" },
+          { text: "js进阶2", link: "/notebook/js/js进阶/JS进阶2" },
+        ],
+      },
+      {
+        text: "Vue",
         items: [
           {
             text: "Vue2",
             items: [
               // { text: "Vue属性", link: "/notebook/frontFrame/Vue2/Vue属性" },
-              { text: "Vue指令", link: "/notebook/frontFrame/Vue2/Vue指令" },
+              { text: "Vue指令", link: "/notebook/Vue/Vue2/Vue指令" },
               // { text: "Vue组件", link: "/notebook/frontFrame/Vue2/Vue组件化" },
-              { text: "VueRouter", link: "/notebook/frontFrame/Vue2/Vue-router" },
+              { text: "VueRouter", link: "/notebook/Vue/Vue2/Vue-router" },
             ],
           },
           {
             text: "Vue3",
-            items: [{ text: "Vue3基本使用", link: "/notebook/frontFrame/Vue3/Vue3" }],
+            items: [{ text: "Vue3基本使用", link: "/notebook/Vue/Vue3/Vue3" }],
+          },
+        ],
+      },
+      {
+        text: "React",
+        items: [
+          {
+            text: "基础使用",
+            link: "/notebook/React/react-base",
+          },
+          {
+            text: "react-redux",
+            link: "/notebook/React/react-redux",
+          },
+          {
+            text: "react-hooks",
+            link: "/notebook/React/react-hooks",
+          },
+          {
+            text: "项目搭建",
+            link: "/notebook/React/project-build",
           },
         ],
       },
@@ -73,7 +96,7 @@ module.exports = {
           },
         ],
       },
-      { text: "My Github", link: "https://github.com/liupziio/Pz-blog" },
+      // { text: "My Github", link: "https://github.com/liupziio/Pz-blog" },
     ],
     sidebar: "auto", // 侧边栏配置
     sidebarDepth: 2, // 侧边栏显示2级

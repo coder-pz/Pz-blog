@@ -939,12 +939,12 @@ export default Person
 
 1. 判断是否 `pureComponent`
    + packages\react\src\ReactBaseClasses.js（144行）
-   + ![image-20221023154041999](React.assets/image-20221023154041999.png)
+   + ![image-20221023154041999](./React.assets/image-20221023154041999.png)
 2. 浅层比较 
    + packages\react-reconciler\src\ReactFiberClassComponent.new.js（355行）
-   + ![image-20221023154027031](React.assets/image-20221023154027031.png)
+   + ![image-20221023154027031](./React.assets/image-20221023154027031.png)
    + packages\shared\shallowEqual.js（18行）
-   + ![image-20221023154007556](React.assets/image-20221023154007556.png)
+   + ![image-20221023154007556](./React.assets/image-20221023154007556.png)
 
 
 
@@ -1405,7 +1405,7 @@ export default App
 
 > 不允许多个根时，可以占位使用
 
-![image-20221031161355403](React.assets/image-20221031161355403.png)
+![image-20221031161355403](./React.assets/image-20221031161355403.png)
 
 
 

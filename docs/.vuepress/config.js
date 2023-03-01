@@ -1,6 +1,6 @@
 module.exports = {
-  title: "Pz's blog",
-  description: "Pz's blog",
+  title: "Pz blog",
+  description: "Pz blog",
   head: [["link", { rel: "icon", href: "/images/head_photo.jpg" }]],
   base: "/Pz-blog/", // 这是部署到github相关的配置
   markdown: {
